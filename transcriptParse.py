@@ -14,26 +14,25 @@ def parseTranscript(inputLines, outputFile, justify = True, length = 105):
         data = [""] + [line.decode("utf8") for line in inputLines]
         
     lines = [""]
-
+    line_num = 1
     for i in range(len(data)):
-        if (i % 4 == 3 and data[1] == "1") or (i % 3 == 2 and data[1] != "1"):
-            line = data[i]
-            if line.find(">>") > -1:
-                lines[-1] = lines[-1] + "\n"
-            lines.append(line + " ")
-            
+        line = data[i]
+        if line.find("-->") > -1:
+            continue;
+        elif line.strip() == str(line_num):
+            line_num = line_num + 1;
+        else:
+            lines.append(line.replace('\n', '') + " ")
+    
     text = " ".join(lines)
     
     if justify:
         lines = leftJustify(text, length)
         
     for line in lines:
+        line = line.strip();
         if len(line) > 0:
-            if line[0] == " ":
-                line = line[1:]
-        line = line.replace(" >>", ">>")
-        line.replace("  ", " ")
-        outputFile.write(line.encode('ascii', 'ignore'))
+            outputFile.write(str(line.encode('ascii', 'ignore')))
 
 def leftJustify(text, lineLength):
     done = False
